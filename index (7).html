@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalendaTrack - Calendario de Entregas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .notification {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .calendar-day:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s ease;
+        }
+        
+        .order-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b-4 border-indigo-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">CalendaTrack</h1>
+                        <p class="text-sm text-gray-600">Calendario de Entregas</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleNotifications()" class="relative bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-7a3 3 0 015.905-.75L17 14h-3v7H4z"></path>
+                        </svg>
+                        <span id="notificationBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </button>
+                    <button onclick="showAddOrderModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                        + Nueva Orden
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Órdenes Activas</p>
+                        <p id="activeOrders" class="text-3xl font-bold text-blue-600">12</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Entregas Hoy</p>
+                        <p id="todayDeliveries" class="text-3xl font-bold text-yellow-600">3</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-red-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Atrasadas</p>
+                        <p id="overdueOrders" class="text-3xl font-bold text-red-600">2</p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Completadas</p>
+                        <p id="completedOrders" class="text-3xl font-bold text-green-600">28</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar and Orders -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Calendar -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Calendario de Entregas</h2>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="previousMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h3 id="currentMonth" class="text-lg font-semibold text-gray-800">Diciembre 2024</h3>
+                        <button onclick="nextMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-7 gap-1 mb-4">
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Dom</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Lun</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Mar</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Mié</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Jue</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Vie</div>
+                    <div class="text-center text-sm font-medium text-gray-500 py-2">Sáb</div>
+                </div>
+                
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1">
+                    <!-- Calendar days will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Órdenes Próximas</h2>
+                <div id="ordersList" class="space-y-4">
+                    <!-- Orders will be generated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Order Modal -->
+    <div id="addOrderModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold text-gray-900 mb-6">Nueva Orden de Entrega</h3>
+            <form onsubmit="addOrder(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Número de Orden</label>
+                        <input type="text" id="orderNumber" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cliente</label>
+                        <input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Código Postal</label>
+                        <input type="text" id="postalCode" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: 28001">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fecha de Entrega</label>
+                        <input type="date" id="deliveryDate" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prioridad</label>
+                        <select id="priority" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="low">Baja</option>
+                            <option value="medium">Media</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                        <textarea id="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="hideAddOrderModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear Orden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notificationsPanel" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-40">
+        <div class="p-6 border-b">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-900">Notificaciones</h3>
+                <button onclick="toggleNotifications()" class="text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="notificationsList" class="p-4 space-y-4 overflow-y-auto h-full">
+            <!-- Notifications will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let orders = [
+            {
+                id: 1,
+                orderNumber: "ORD-001",
+                customer: "Empresa ABC",
+                postalCode: "28001",
+                deliveryDate: "2024-12-15",
+                priority: "high",
+                status: "pending",
+                description: "Entrega de productos electrónicos"
+            },
+            {
+                id: 2,
+                orderNumber: "ORD-002",
+                customer: "Cliente XYZ",
+                postalCode: "08001",
+                deliveryDate: "2024-12-18",
+                priority: "medium",
+                status: "pending",
+                description: "Mobiliario de oficina"
+            },
+            {
+                id: 3,
+                orderNumber: "ORD-003",
+                customer: "Corporación 123",
+                postalCode: "41001",
+                deliveryDate: "2024-12-20",
+                priority: "low",
+                status: "pending",
+                description: "Material de construcción"
+            }
+        ];
+
+        let notifications = [
+            {
+                id: 1,
+                message: "Orden ORD-001 vence mañana",
+                type: "warning",
+                time: "Hace 2 horas"
+            },
+            {
+                id: 2,
+                message: "Nueva orden ORD-004 creada",
+                type: "info",
+                time: "Hace 4 horas"
+            },
+            {
+                id: 3,
+                message: "Orden ORD-005 completada",
+                type: "success",
+                time: "Hace 1 día"
+            }
+        ];
+
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+            updateOrdersList();
+            updateNotifications();
+            updateStats();
+            checkDeadlines();
+        });
+
+        function generateCalendar() {
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            
+            document.getElementById('currentMonth').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Empty cells for days before the first day of the month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'h-20 border border-gray-100';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'h-20 border border-gray-100 p-1 cursor-pointer hover:bg-gray-50 calendar-day';
+                
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayOrders = orders.filter(order => order.deliveryDate === dateStr);
+                
+                let dayContent = `<div class="text-sm font-medium text-gray-700">${day}</div>`;
+                
+                if (dayOrders.length > 0) {
+                    dayContent += `<div class="mt-1">`;
+                    dayOrders.forEach(order => {
+                        const priorityColor = order.priority === 'high' ? 'bg-red-500' : 
+                                           order.priority === 'medium' ? 'bg-yellow-500' : 'bg-green-500';
+                        dayContent += `<div class="text-xs text-white px-1 py-0.5 rounded mb-1 ${priorityColor} order-badge">${order.orderNumber}</div>`;
+                    });
+                    dayContent += `</div>`;
+                }
+                
+                dayElement.innerHTML = dayContent;
+                dayElement.onclick = () => showDayOrders(dateStr);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function updateOrdersList() {
+            const ordersList = document.getElementById('ordersList');
+            const upcomingOrders = orders
+                .filter(order => order.status === 'pending')
+                .sort((a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate))
+                .slice(0, 5);
+            
+            ordersList.innerHTML = upcomingOrders.map(order => {
+                const priorityColor = order.priority === 'high' ? 'border-red-500 bg-red-50' : 
+                                   order.priority === 'medium' ? 'border-yellow-500 bg-yellow-50' : 'border-green-500 bg-green-50';
+                
+                const deliveryDate = new Date(order.deliveryDate);
+                const today = new Date();
+                const daysUntil = Math.ceil((deliveryDate - today) / (1000 * 60 * 60 * 24));
+                
+                return `
+                    <div class="border-l-4 ${priorityColor} p-4 rounded-r-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${order.orderNumber}</h4>
+                                <p class="text-sm text-gray-600">${order.customer}</p>
+                                <p class="text-xs text-blue-600 font-medium">CP: ${order.postalCode}</p>
+                                <p class="text-xs text-gray-500 mt-1">${order.description}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-medium ${daysUntil <= 1 ? 'text-red-600' : 'text-gray-600'}">
+                                    ${daysUntil === 0 ? 'Hoy' : daysUntil === 1 ? 'Mañana' : `${daysUntil} días`}
+                                </p>
+                                <button onclick="completeOrder(${order.id})" class="text-xs bg-green-600 text-white px-2 py-1 rounded mt-1 hover:bg-green-700">
+                                    Completar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateNotifications() {
+            const notificationsList = document.getElementById('notificationsList');
+            notificationsList.innerHTML = notifications.map(notification => {
+                const typeColor = notification.type === 'warning' ? 'bg-yellow-100 border-yellow-500' :
+                               notification.type === 'success' ? 'bg-green-100 border-green-500' : 'bg-blue-100 border-blue-500';
+                
+                return `
+                    <div class="border-l-4 ${typeColor} p-3 rounded-r-lg notification">
+                        <p class="text-sm text-gray-800">${notification.message}</p>
+                        <p class="text-xs text-gray-500 mt-1">${notification.time}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const activeOrders = orders.filter(order => order.status === 'pending').length;
+            const todayDeliveries = orders.filter(order => {
+                const today = new Date().toISOString().split('T')[0];
+                return order.deliveryDate === today && order.status === 'pending';
+            }).length;
+            const overdueOrders = orders.filter(order => {
+                const today = new Date();
+                const deliveryDate = new Date(order.deliveryDate);
+                return deliveryDate < today && order.status === 'pending';
+            }).length;
+            const completedOrders = orders.filter(order => order.status === 'completed').length;
+            
+            document.getElementById('activeOrders').textContent = activeOrders;
+            document.getElementById('todayDeliveries').textContent = todayDeliveries;
+            document.getElementById('overdueOrders').textContent = overdueOrders;
+            document.getElementById('completedOrders').textContent = completedOrders;
+        }
+
+        function checkDeadlines() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            orders.forEach(order => {
+                const deliveryDate = new Date(order.deliveryDate);
+                if (deliveryDate.toDateString() === tomorrow.toDateString() && order.status === 'pending') {
+                    showNotification(`⚠️ Orden ${order.orderNumber} vence mañana`, 'warning');
+                }
+            });
+        }
+
+        function showNotification(message, type) {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                type: type,
+                time: 'Ahora'
+            };
+            notifications.unshift(notification);
+            updateNotifications();
+            
+            // Send notification to email via Formspree
+            sendNotificationToEmail(notification);
+            
+            // Update notification badge
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = notifications.length;
+        }
+
+        function sendOrderToEmail(order) {
+            const formData = new FormData();
+            formData.append('subject', `Nueva Orden Creada: ${order.orderNumber}`);
+            formData.append('message', `
+NUEVA ORDEN DE ENTREGA CREADA
+
+Número de Orden: ${order.orderNumber}
+Cliente: ${order.customer}
+Código Postal: ${order.postalCode}
+Fecha de Entrega: ${order.deliveryDate}
+Prioridad: ${order.priority.toUpperCase()}
+Descripción: ${order.description}
+
+Estado: Pendiente
+Creada: ${new Date().toLocaleString('es-ES')}
+
+---
+CalendaTrack - Sistema de Gestión de Entregas
+            `);
+            
+            fetch('https://formspree.io/f/xpwlgonv', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Orden enviada por correo exitosamente');
+                } else {
+                    console.log('Error al enviar orden por correo');
+                }
+            }).catch(error => {
+                console.log('Error de conexión al enviar orden:', error);
+            });
+        }
+
+        function sendNotificationToEmail(notification) {
+            const formData = new FormData();
+            formData.append('subject', `Notificación CalendaTrack: ${notification.type.toUpperCase()}`);
+            formData.append('message', `
+NOTIFICACIÓN DEL SISTEMA
+
+Tipo: ${notification.type.toUpperCase()}
+Mensaje: ${notification.message}
+Hora: ${new Date().toLocaleString('es-ES')}
+
+---
+CalendaTrack - Sistema de Gestión de Entregas
+            `);
+            
+            fetch('https://formspree.io/f/xpwlgonv', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Notificación enviada por correo exitosamente');
+                } else {
+                    console.log('Error al enviar notificación por correo');
+                }
+            }).catch(error => {
+                console.log('Error de conexión al enviar notificación:', error);
+            });
+        }
+
+        function previousMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar();
+        }
+
+        function showAddOrderModal() {
+            document.getElementById('addOrderModal').classList.remove('hidden');
+            document.getElementById('addOrderModal').classList.add('flex');
+        }
+
+        function hideAddOrderModal() {
+            document.getElementById('addOrderModal').classList.add('hidden');
+            document.getElementById('addOrderModal').classList.remove('flex');
+        }
+
+        function addOrder(event) {
+            event.preventDefault();
+            
+            const newOrder = {
+                id: Date.now(),
+                orderNumber: document.getElementById('orderNumber').value,
+                customer: document.getElementById('customerName').value,
+                postalCode: document.getElementById('postalCode').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                priority: document.getElementById('priority').value,
+                status: 'pending',
+                description: document.getElementById('description').value
+            };
+            
+            orders.push(newOrder);
+            
+            // Send order to email via Formspree
+            sendOrderToEmail(newOrder);
+            
+            // Reset form
+            event.target.reset();
+            hideAddOrderModal();
+            
+            // Update displays
+            generateCalendar();
+            updateOrdersList();
+            updateStats();
+            
+            showNotification(`✅ Nueva orden ${newOrder.orderNumber} creada`, 'success');
+        }
+
+        function completeOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'completed';
+                updateOrdersList();
+                updateStats();
+                generateCalendar();
+                showNotification(`✅ Orden ${order.orderNumber} completada`, 'success');
+            }
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationsPanel');
+            panel.classList.toggle('translate-x-full');
+        }
+
+        function showDayOrders(dateStr) {
+            const dayOrders = orders.filter(order => order.deliveryDate === dateStr);
+            if (dayOrders.length > 0) {
+                const orderDetails = dayOrders.map(order => 
+                    `• ${order.orderNumber} - ${order.customer}\n  CP: ${order.postalCode} (${order.priority})`
+                ).join('\n\n');
+                alert(`Entregas para ${dateStr}:\n\n${orderDetails}`);
+            }
+        }
+
+        // Auto-refresh notifications every 30 seconds
+        setInterval(() => {
+            checkDeadlines();
+        }, 30000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9754775dd424087c',t:'MTc1NjIyMzIzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
