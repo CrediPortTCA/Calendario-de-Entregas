@@ -31,9 +31,114 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+
+        .login-container {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center">
+        <div class="login-container bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-8">
+                <div class="bg-indigo-600 p-4 rounded-full w-20 h-20 mx-auto mb-4">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">CalendaTrack</h1>
+                <p class="text-gray-600">Inicia sesión para acceder al calendario de entregas</p>
+            </div>
+            
+            <form onsubmit="login(event)" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="username" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ingresa tu usuario">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ingresa tu contraseña">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                    Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    ¿No tienes cuenta? 
+                    <button onclick="showRegisterForm()" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                        Crear cuenta nueva
+                    </button>
+                </p>
+            </div>
+            
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p class="text-sm text-blue-800">
+                    <strong>Demo:</strong> Usuario: admin | Contraseña: 123456
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Screen -->
+    <div id="registerScreen" class="min-h-screen flex items-center justify-center hidden">
+        <div class="login-container bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-8">
+                <div class="bg-green-600 p-4 rounded-full w-20 h-20 mx-auto mb-4">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Registro de Moderador</h1>
+                <p class="text-gray-600">Crea tu cuenta para gestionar entregas</p>
+            </div>
+            
+            <form onsubmit="register(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo</label>
+                    <input type="text" id="fullName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Tu nombre completo">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="tu@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuario</label>
+                    <input type="text" id="newUsername" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Elige un nombre de usuario">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+                    <input type="password" id="newPassword" required minlength="6" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Contraseña</label>
+                    <input type="password" id="confirmPassword" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" placeholder="Repite tu contraseña">
+                </div>
+                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                    Crear Cuenta
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    ¿Ya tienes cuenta? 
+                    <button onclick="showLoginForm()" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                        Iniciar sesión
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App (Initially Hidden) -->
+    <div id="mainApp" class="hidden">
     <!-- Header -->
     <header class="bg-white shadow-lg border-b-4 border-indigo-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -50,14 +155,19 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <span id="userWelcome" class="text-sm text-gray-600"></span>
                     <button onclick="toggleNotifications()" class="relative bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h6v-7a3 3 0 015.905-.75L17 14h-3v7H4z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.021 15.378a7.725 7.725 0 01-.465-2.662c.047-4.378 3.83-7.728 8.444-7.728s8.397 3.35 8.444 7.728a7.725 7.725 0 01-.465 2.662L21 18.378H3l1.021-3z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.73 21a2 2 0 01-3.46 0"></path>
                         </svg>
                         <span id="notificationBadge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
                     </button>
                     <button onclick="showAddOrderModal()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors font-medium">
                         + Nueva Orden
+                    </button>
+                    <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        Cerrar Sesión
                     </button>
                 </div>
             </div>
@@ -217,7 +327,7 @@
     <!-- Notifications Panel -->
     <div id="notificationsPanel" class="fixed top-0 right-0 h-full w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-40">
         <div class="p-6 border-b">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-gray-900">Notificaciones</h3>
                 <button onclick="toggleNotifications()" class="text-gray-500 hover:text-gray-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,6 +335,9 @@
                     </svg>
                 </button>
             </div>
+            <button onclick="clearAllNotifications()" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                🗑️ Limpiar Todas
+            </button>
         </div>
         <div id="notificationsList" class="p-4 space-y-4 overflow-y-auto h-full">
             <!-- Notifications will be generated by JavaScript -->
@@ -291,14 +404,7 @@
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
 
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            generateCalendar();
-            updateOrdersList();
-            updateNotifications();
-            updateStats();
-            checkDeadlines();
-        });
+        // Remove the old DOMContentLoaded listener since login now handles initialization
 
         function generateCalendar() {
             const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -385,13 +491,31 @@
 
         function updateNotifications() {
             const notificationsList = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                notificationsList.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4.021 15.378a7.725 7.725 0 01-.465-2.662c.047-4.378 3.83-7.728 8.444-7.728s8.397 3.35 8.444 7.728a7.725 7.725 0 01-.465 2.662L21 18.378H3l1.021-3z"></path>
+                        </svg>
+                        <p class="text-sm">No hay notificaciones</p>
+                    </div>
+                `;
+                return;
+            }
+            
             notificationsList.innerHTML = notifications.map(notification => {
                 const typeColor = notification.type === 'warning' ? 'bg-yellow-100 border-yellow-500' :
                                notification.type === 'success' ? 'bg-green-100 border-green-500' : 'bg-blue-100 border-blue-500';
                 
                 return `
-                    <div class="border-l-4 ${typeColor} p-3 rounded-r-lg notification">
-                        <p class="text-sm text-gray-800">${notification.message}</p>
+                    <div class="border-l-4 ${typeColor} p-3 rounded-r-lg notification relative group">
+                        <button onclick="deleteNotification(${notification.id})" class="absolute top-2 right-2 text-gray-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </button>
+                        <p class="text-sm text-gray-800 pr-6">${notification.message}</p>
                         <p class="text-xs text-gray-500 mt-1">${notification.time}</p>
                     </div>
                 `;
@@ -444,8 +568,7 @@
             sendNotificationToEmail(notification);
             
             // Update notification badge
-            const badge = document.getElementById('notificationBadge');
-            badge.textContent = notifications.length;
+            updateNotificationBadge();
         }
 
         function sendOrderToEmail(order) {
@@ -601,10 +724,320 @@ CalendaTrack - Sistema de Gestión de Entregas
             }
         }
 
+        function deleteNotification(notificationId) {
+            notifications = notifications.filter(n => n.id !== notificationId);
+            updateNotifications();
+            updateNotificationBadge();
+        }
+
+        function clearAllNotifications() {
+            if (notifications.length === 0) {
+                alert('No hay notificaciones para eliminar');
+                return;
+            }
+            
+            if (confirm('¿Estás seguro de que quieres eliminar todas las notificaciones?')) {
+                notifications = [];
+                updateNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            badge.textContent = notifications.length;
+            if (notifications.length === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'flex';
+            }
+        }
+
         // Auto-refresh notifications every 30 seconds
         setInterval(() => {
             checkDeadlines();
         }, 30000);
+
+        // Login and notification permission functions
+        let currentUser = null;
+        let notificationPermission = false;
+        let registeredUsers = JSON.parse(localStorage.getItem('calendatrack_users') || '[]');
+
+        function login(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Check demo account
+            if (username === 'admin' && password === '123456') {
+                currentUser = { username: 'admin', fullName: 'Administrador', email: 'admin@calendatrack.com' };
+                loginSuccess();
+                return;
+            }
+            
+            // Check registered users
+            const user = registeredUsers.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                loginSuccess();
+            } else {
+                alert('Usuario o contraseña incorrectos.');
+            }
+        }
+
+        function loginSuccess() {
+            document.getElementById('userWelcome').textContent = `Bienvenido, ${currentUser.fullName || currentUser.username}`;
+            
+            // Hide login screen and show main app
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            // Request notification permission
+            requestNotificationPermission();
+            
+            // Initialize the app
+            generateCalendar();
+            updateOrdersList();
+            updateNotifications();
+            updateStats();
+            checkDeadlines();
+            
+            showNotification('✅ Sesión iniciada correctamente', 'success');
+        }
+
+        function register(event) {
+            event.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validations
+            if (password !== confirmPassword) {
+                alert('Las contraseñas no coinciden');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('La contraseña debe tener al menos 6 caracteres');
+                return;
+            }
+            
+            // Check if username already exists
+            if (registeredUsers.find(u => u.username === username) || username === 'admin') {
+                alert('El nombre de usuario ya existe');
+                return;
+            }
+            
+            // Check if email already exists
+            if (registeredUsers.find(u => u.email === email)) {
+                alert('El email ya está registrado');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                fullName: fullName,
+                email: email,
+                username: username,
+                password: password,
+                registeredAt: new Date().toISOString()
+            };
+            
+            registeredUsers.push(newUser);
+            localStorage.setItem('calendatrack_users', JSON.stringify(registeredUsers));
+            
+            // Send registration notification to email
+            sendRegistrationToEmail(newUser);
+            
+            alert('¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.');
+            showLoginForm();
+            
+            // Clear form
+            event.target.reset();
+        }
+
+        function sendRegistrationToEmail(user) {
+            const formData = new FormData();
+            formData.append('subject', `Nuevo Moderador Registrado: ${user.fullName}`);
+            formData.append('message', `
+NUEVO MODERADOR REGISTRADO EN CALENDATRACK
+
+Nombre Completo: ${user.fullName}
+Email: ${user.email}
+Usuario: ${user.username}
+Fecha de Registro: ${new Date(user.registeredAt).toLocaleString('es-ES')}
+
+El moderador ya puede acceder al sistema de gestión de entregas.
+
+---
+CalendaTrack - Sistema de Gestión de Entregas
+            `);
+            
+            fetch('https://formspree.io/f/xpwlgonv', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Registro enviado por correo exitosamente');
+                } else {
+                    console.log('Error al enviar registro por correo');
+                }
+            }).catch(error => {
+                console.log('Error de conexión al enviar registro:', error);
+            });
+        }
+
+        function showRegisterForm() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.remove('hidden');
+        }
+
+        function showLoginForm() {
+            document.getElementById('registerScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        function logout() {
+            currentUser = null;
+            notificationPermission = false;
+            
+            // Show login screen and hide main app
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            
+            // Reset form
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(function(permission) {
+                    if (permission === 'granted') {
+                        notificationPermission = true;
+                        showBrowserNotification('CalendaTrack', 'Notificaciones del navegador activadas correctamente');
+                        showNotification('🔔 Notificaciones del navegador activadas', 'success');
+                    } else {
+                        showNotification('⚠️ Notificaciones del navegador denegadas', 'warning');
+                    }
+                });
+            } else {
+                showNotification('❌ Tu navegador no soporta notificaciones', 'warning');
+            }
+        }
+
+        function showBrowserNotification(title, message, icon = null) {
+            if (notificationPermission && 'Notification' in window && Notification.permission === 'granted') {
+                const notification = new Notification(title, {
+                    body: message,
+                    icon: icon || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggN1YzTTggNFYzTTkgOEgxME01IDIxSDE0QTIgMiAwIDAwMTYgMTlWN0EyIDIgMCAwMDE0IDVINUEyIDIgMCAwMDMgN1YxOUEyIDIgMCAwMDUgMjFaIiBzdHJva2U9IiM0F46RjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=',
+                    badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTggN1YzTTggNFYzTTkgOEgxME01IDIxSDE0QTIgMiAwIDAwMTYgMTlWN0EyIDIgMCAwMDE0IDVINUEyIDIgMCAwMDMgN1YxOUEyIDIgMCAwMDUgMjFaIiBzdHJva2U9IiM0F46RjYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPgo=',
+                    requireInteraction: true,
+                    tag: 'calendatrack-notification'
+                });
+                
+                // Auto close after 5 seconds
+                setTimeout(() => {
+                    notification.close();
+                }, 5000);
+            }
+        }
+
+        // Override showNotification to include browser notifications
+        function showNotification(message, type) {
+            const notification = {
+                id: Date.now(),
+                message: message,
+                type: type,
+                time: 'Ahora'
+            };
+            notifications.unshift(notification);
+            updateNotifications();
+            
+            // Send notification to email via Formspree
+            sendNotificationToEmail(notification);
+            
+            // Show browser notification for important alerts
+            if (type === 'warning' || type === 'success') {
+                const title = type === 'warning' ? '⚠️ Alerta CalendaTrack' : '✅ CalendaTrack';
+                showBrowserNotification(title, message);
+            }
+            
+            // Update notification badge
+            updateNotificationBadge();
+        }
+
+        // Override addOrder to include browser notification
+        function addOrder(event) {
+            event.preventDefault();
+            
+            const newOrder = {
+                id: Date.now(),
+                orderNumber: document.getElementById('orderNumber').value,
+                customer: document.getElementById('customerName').value,
+                postalCode: document.getElementById('postalCode').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                priority: document.getElementById('priority').value,
+                status: 'pending',
+                description: document.getElementById('description').value
+            };
+            
+            orders.push(newOrder);
+            
+            // Send order to email via Formspree
+            sendOrderToEmail(newOrder);
+            
+            // Show browser notification for new order
+            showBrowserNotification(
+                '📦 Nueva Orden Creada', 
+                `Orden ${newOrder.orderNumber} para ${newOrder.customer} - Entrega: ${newOrder.deliveryDate}`
+            );
+            
+            // Reset form
+            event.target.reset();
+            hideAddOrderModal();
+            
+            // Update displays
+            generateCalendar();
+            updateOrdersList();
+            updateStats();
+            
+            showNotification(`✅ Nueva orden ${newOrder.orderNumber} creada`, 'success');
+        }
+
+        // Override completeOrder to include browser notification
+        function completeOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'completed';
+                updateOrdersList();
+                updateStats();
+                generateCalendar();
+                
+                // Show browser notification for completed order
+                showBrowserNotification(
+                    '✅ Orden Completada', 
+                    `La orden ${order.orderNumber} de ${order.customer} ha sido completada`
+                );
+                
+                showNotification(`✅ Orden ${order.orderNumber} completada`, 'success');
+            }
+        }
+
+        // Check if user is already logged in on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // For demo purposes, always show login screen first
+            // In a real app, you might check localStorage or session storage here
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9754775dd424087c',t:'MTc1NjIyMzIzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    </div> <!-- End of mainApp -->
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97549c7a13b29fe7',t:'MTc1NjIyNDc1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
